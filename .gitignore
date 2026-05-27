@@ -1,0 +1,10 @@
+# Root virtualenv (if created at project level)
+.venv/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# Env secrets at repo root
+.env
+.env.*

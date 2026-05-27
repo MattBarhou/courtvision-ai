@@ -1,0 +1,11 @@
+.venv/
+.env
+.env.*
+__pycache__/
+*.pyc
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+artifacts/*.pkl
+artifacts/*.json
