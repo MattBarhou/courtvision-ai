@@ -67,3 +67,72 @@ class ChampionshipProbabilityResponse(BaseModel):
     simulation_count: int
     methodology: str
     probabilities: list[ChampionshipProbabilityItem]
+
+
+class ActualStanding(BaseModel):
+    """Actual regular-season standings row from the external data source."""
+
+    rank: int
+    conference: str
+    conference_rank: int
+    playoff_seed: int | None = None
+    team_name: str
+    wins: int
+    losses: int
+    win_pct: float
+    games_back: str | None = None
+
+
+class PlayoffSeriesTeam(BaseModel):
+    """Team representation inside a playoff matchup."""
+
+    team_name: str
+    abbreviation: str
+    seed: int | None = None
+    is_series_winner: bool = False
+
+
+class PlayoffMatchup(BaseModel):
+    """Current or completed playoff series."""
+
+    matchup_id: str
+    series_title: str
+    series_summary: str
+    status_detail: str
+    status_state: str
+    scheduled_date: str | None = None
+    is_complete: bool
+    competitor_one: PlayoffSeriesTeam
+    competitor_two: PlayoffSeriesTeam
+
+
+class PlayoffRound(BaseModel):
+    """Playoff bracket round."""
+
+    round_id: int
+    round_name: str
+    matchups: list[PlayoffMatchup]
+
+
+class StandingsAccuracySummary(BaseModel):
+    """High-level accuracy metrics comparing projected and actual regular-season standings."""
+
+    compared_teams: int
+    exact_rank_matches: int
+    within_three_slots: int
+    top_eight_overlap: int
+    mean_absolute_rank_error: float
+
+
+class SeasonResultsResponse(BaseModel):
+    """Combined predicted-vs-actual season response for regular season and playoffs."""
+
+    season: str
+    simulation_count: int
+    generated_at: str
+    methodology: str
+    playoff_status: str
+    predicted_standings: list[TeamStanding]
+    actual_regular_season_standings: list[ActualStanding]
+    current_playoff_bracket: list[PlayoffRound]
+    accuracy_summary: StandingsAccuracySummary

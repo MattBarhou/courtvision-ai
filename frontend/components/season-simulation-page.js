@@ -8,29 +8,29 @@ import { motion, useReducedMotion } from "motion/react";
 import AppShell from "@/components/app-shell";
 import PageHero from "@/components/page-hero";
 import SeasonOutlookPanel from "@/components/season-outlook-panel";
-import { simulateSeason } from "@/lib/api";
+import { fetchSeasonResults } from "@/lib/api";
 
 const DEFAULT_SIMULATION_COUNT = "200";
 
 export default function SeasonSimulationPage() {
   const [simulationCount, setSimulationCount] = useState(DEFAULT_SIMULATION_COUNT);
-  const [seasonData, setSeasonData] = useState(null);
+  const [seasonResults, setSeasonResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
-    loadSeason(DEFAULT_SIMULATION_COUNT);
+    loadSeasonResults(DEFAULT_SIMULATION_COUNT);
   }, []);
 
-  async function loadSeason(count) {
+  async function loadSeasonResults(count) {
     try {
       setError("");
       setLoading(true);
-      const result = await simulateSeason(Number(count));
-      setSeasonData(result);
+      const result = await fetchSeasonResults(Number(count));
+      setSeasonResults(result);
     } catch (loadError) {
-      setError(loadError.message || "Unable to load season simulation.");
+      setError(loadError.message || "Unable to load season comparison.");
     } finally {
       setLoading(false);
     }
@@ -40,8 +40,8 @@ export default function SeasonSimulationPage() {
     <AppShell>
       <PageHero
         badge="Season Simulation"
-        title="Projected Standings"
-        description="Explore the current regular-season outlook without crowding the prediction experience. Adjust the simulation count and rerun the table whenever you want."
+        title="Projected Standings vs. Reality"
+        description="See how the model&apos;s projected table compares to the actual 2025-26 regular-season finish, then use the same season context to follow the current playoff picture."
         actions={[
           {
             href: "/title-odds",
@@ -55,17 +55,17 @@ export default function SeasonSimulationPage() {
 
       <motion.section
         initial={shouldReduceMotion ? false : { opacity: 0, y: 24 }}
-        whileInView={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
+        animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
         transition={{ duration: 0.55, ease: "easeOut" }}
+        style={{ position: "relative", zIndex: 1 }}
       >
         <SeasonOutlookPanel
           count={simulationCount}
           loading={loading}
           error={error}
-          seasonData={seasonData}
+          seasonResults={seasonResults}
           onCountChange={setSimulationCount}
-          onRefresh={() => loadSeason(simulationCount)}
+          onRefresh={() => loadSeasonResults(simulationCount)}
         />
       </motion.section>
     </AppShell>

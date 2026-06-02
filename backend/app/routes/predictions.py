@@ -8,11 +8,13 @@ from app.schemas.prediction_schema import (
     ChampionshipProbabilityResponse,
     GamePredictionRequest,
     GamePredictionResponse,
+    SeasonResultsResponse,
     SeasonSimulationResponse,
 )
 from app.services.prediction_service import get_prediction_health, predict_game
 from app.services.simulation_service import (
     estimate_championship_probabilities,
+    get_season_results,
     simulate_season,
 )
 
@@ -64,6 +66,18 @@ def season_simulation(
 
     try:
         return simulate_season(num_simulations=num_simulations)
+    except Exception as error:  # pragma: no cover - API boundary
+        _raise_http_error(error)
+
+
+@router.get("/season-results", response_model=SeasonResultsResponse)
+def season_results(
+    num_simulations: int = Query(default=200, ge=1, le=5000),
+) -> SeasonResultsResponse:
+    """Return projected standings beside actual regular-season and playoff results."""
+
+    try:
+        return get_season_results(num_simulations=num_simulations)
     except Exception as error:  # pragma: no cover - API boundary
         _raise_http_error(error)
 

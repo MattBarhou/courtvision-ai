@@ -48,7 +48,12 @@ export default function PredictionPanel({
       p={{ base: "xl", md: 34 }}
       style={{
         background:
-          "linear-gradient(180deg, rgba(255,255,255,0.88), rgba(251,247,240,0.7))",
+          "linear-gradient(180deg, rgba(255,255,255,0.94), rgba(251,247,240,0.86))",
+        border: "1px solid rgba(20, 33, 61, 0.08)",
+        backdropFilter: "blur(14px)",
+        WebkitBackdropFilter: "blur(14px)",
+        position: "relative",
+        zIndex: 1,
       }}
     >
       <Stack gap="lg">
@@ -161,7 +166,10 @@ export default function PredictionPanel({
         <Paper
           radius={24}
           p="lg"
-          style={{ background: "rgba(255,255,255,0.72)" }}
+          style={{
+            background: "rgba(255,255,255,0.82)",
+            border: "1px solid rgba(20, 33, 61, 0.06)",
+          }}
         >
           {result ? (
             <Stack gap="md">

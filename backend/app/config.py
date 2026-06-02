@@ -30,6 +30,8 @@ class Settings:
     random_seed: int = int(os.getenv("RANDOM_SEED", "42"))
     rolling_window: int = int(os.getenv("ROLLING_WINDOW", "10"))
     simulation_count: int = int(os.getenv("DEFAULT_SIMULATION_COUNT", "200"))
+    standings_refresh_seconds: int = int(os.getenv("STANDINGS_REFRESH_SECONDS", "21600"))
+    playoff_refresh_seconds: int = int(os.getenv("PLAYOFF_REFRESH_SECONDS", "900"))
     base_dir: Path = BASE_DIR
     raw_data_dir: Path = BASE_DIR / "data" / "raw"
     processed_data_dir: Path = BASE_DIR / "data" / "processed"

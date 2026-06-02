@@ -96,9 +96,9 @@ export default function GamePredictionPage() {
       <motion.section
         id="prediction-panel"
         initial={shouldReduceMotion ? false : { opacity: 0, y: 24 }}
-        whileInView={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
+        animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
         transition={{ duration: 0.55, ease: "easeOut" }}
+        style={{ position: "relative", zIndex: 1 }}
       >
         <PredictionPanel
           form={predictionForm}

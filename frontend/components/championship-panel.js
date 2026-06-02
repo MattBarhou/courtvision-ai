@@ -98,6 +98,20 @@ export default function ChampionshipPanel({
           </Text>
         ) : null}
 
+        <Paper
+          radius="lg"
+          p="md"
+          style={{
+            background: "rgba(255,255,255,0.08)",
+            border: "1px solid rgba(255,255,255,0.1)",
+          }}
+        >
+          <Text c="rgba(255,255,255,0.78)" fz="sm">
+            Disclaimer: these title probabilities are based primarily on regular-season-driven
+            model projections, with eliminated playoff teams removed using the live bracket.
+          </Text>
+        </Paper>
+
         {loading && !championshipData ? (
           <Stack gap="md">
             <Skeleton h={56} radius="lg" />

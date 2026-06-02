@@ -54,6 +54,15 @@ export function simulateSeason(numSimulations) {
   );
 }
 
+export function fetchSeasonResults(numSimulations) {
+  return request(
+    `/api/predictions/season-results?num_simulations=${numSimulations}`,
+    {
+      cache: "no-store",
+    }
+  );
+}
+
 export function fetchChampionshipProbabilities(numSimulations) {
   return request(
     `/api/predictions/championship-probabilities?num_simulations=${numSimulations}`,

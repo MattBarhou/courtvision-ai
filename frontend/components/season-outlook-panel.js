@@ -3,6 +3,7 @@
 import {
   Badge,
   Button,
+  Grid,
   Group,
   Paper,
   ScrollArea,
@@ -34,16 +35,76 @@ function SummaryItem({ label, value }) {
   );
 }
 
+function PredictedStandingsTable({ rows }) {
+  return (
+    <ScrollArea h={520} offsetScrollbars>
+      <Table highlightOnHover verticalSpacing="sm">
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>Rank</Table.Th>
+            <Table.Th>Team</Table.Th>
+            <Table.Th ta="right">W</Table.Th>
+            <Table.Th ta="right">L</Table.Th>
+            <Table.Th ta="right">Win %</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {rows.map((team) => (
+            <Table.Tr key={`predicted-${team.team_id}`}>
+              <Table.Td fw={700}>{team.rank}</Table.Td>
+              <Table.Td>{team.team_name}</Table.Td>
+              <Table.Td ta="right">{team.wins}</Table.Td>
+              <Table.Td ta="right">{team.losses}</Table.Td>
+              <Table.Td ta="right">{team.win_pct}</Table.Td>
+            </Table.Tr>
+          ))}
+        </Table.Tbody>
+      </Table>
+    </ScrollArea>
+  );
+}
+
+function ActualStandingsTable({ rows }) {
+  return (
+    <ScrollArea h={520} offsetScrollbars>
+      <Table highlightOnHover verticalSpacing="sm">
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>Rank</Table.Th>
+            <Table.Th>Team</Table.Th>
+            <Table.Th ta="right">W</Table.Th>
+            <Table.Th ta="right">L</Table.Th>
+            <Table.Th ta="right">Seed</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {rows.map((team) => (
+            <Table.Tr key={`actual-${team.team_name}`}>
+              <Table.Td fw={700}>{team.rank}</Table.Td>
+              <Table.Td>{team.team_name}</Table.Td>
+              <Table.Td ta="right">{team.wins}</Table.Td>
+              <Table.Td ta="right">{team.losses}</Table.Td>
+              <Table.Td ta="right">{team.playoff_seed ?? "-"}</Table.Td>
+            </Table.Tr>
+          ))}
+        </Table.Tbody>
+      </Table>
+    </ScrollArea>
+  );
+}
+
 export default function SeasonOutlookPanel({
   count,
   loading,
   error,
-  seasonData,
+  seasonResults,
   onCountChange,
   onRefresh,
 }) {
-  const rows = seasonData?.projected_standings?.slice(0, 12) || [];
   const shouldReduceMotion = useReducedMotion();
+  const predictedRows = seasonResults?.predicted_standings || [];
+  const actualRows = seasonResults?.actual_regular_season_standings || [];
+  const summary = seasonResults?.accuracy_summary;
 
   return (
     <Paper
@@ -55,12 +116,12 @@ export default function SeasonOutlookPanel({
         <Group justify="space-between" align="flex-start">
           <div>
             <Badge size="lg" radius="sm" color="ink" variant="light" mb="sm">
-              Season Simulation
+              Season Comparison
             </Badge>
-            <Title order={3}>Projected regular-season picture</Title>
+            <Title order={3}>Predicted vs. actual regular-season standings</Title>
             <Text c="dimmed" mt={6}>
-              Run a fresh simulation and inspect the projected top of the
-              table.
+              Compare the model&apos;s projected table with the actual 2025-26
+              regular-season finish.
             </Text>
           </div>
           <ThemeIcon size={48} radius="md" color="clay" variant="light">
@@ -95,7 +156,7 @@ export default function SeasonOutlookPanel({
               onClick={onRefresh}
               leftSection={<IconRefresh size={18} />}
             >
-              Refresh Outlook
+              Refresh Comparison
             </Button>
           </motion.div>
         </Group>
@@ -106,18 +167,34 @@ export default function SeasonOutlookPanel({
           </Text>
         ) : null}
 
-        <Group grow>
-          <SummaryItem
-            label="Completed games"
-            value={seasonData ? seasonData.completed_games : "--"}
-          />
-          <SummaryItem
-            label="Remaining games"
-            value={seasonData ? seasonData.remaining_games : "--"}
-          />
-        </Group>
+        <Grid>
+          <Grid.Col span={{ base: 6, md: 3 }}>
+            <SummaryItem
+              label="Exact matches"
+              value={summary ? summary.exact_rank_matches : "--"}
+            />
+          </Grid.Col>
+          <Grid.Col span={{ base: 6, md: 3 }}>
+            <SummaryItem
+              label="Within 3 spots"
+              value={summary ? summary.within_three_slots : "--"}
+            />
+          </Grid.Col>
+          <Grid.Col span={{ base: 6, md: 3 }}>
+            <SummaryItem
+              label="Top 8 overlap"
+              value={summary ? summary.top_eight_overlap : "--"}
+            />
+          </Grid.Col>
+          <Grid.Col span={{ base: 6, md: 3 }}>
+            <SummaryItem
+              label="Avg rank error"
+              value={summary ? summary.mean_absolute_rank_error : "--"}
+            />
+          </Grid.Col>
+        </Grid>
 
-        {loading && !seasonData ? (
+        {loading && !seasonResults ? (
           <Stack gap="sm">
             <Skeleton h={20} radius="xl" />
             <Skeleton h={20} radius="xl" />
@@ -125,35 +202,25 @@ export default function SeasonOutlookPanel({
             <Skeleton h={20} radius="xl" />
           </Stack>
         ) : (
-          <ScrollArea h={420} offsetScrollbars>
-            <Table highlightOnHover verticalSpacing="sm">
-              <Table.Thead>
-                <Table.Tr>
-                  <Table.Th>Rank</Table.Th>
-                  <Table.Th>Team</Table.Th>
-                  <Table.Th ta="right">W</Table.Th>
-                  <Table.Th ta="right">L</Table.Th>
-                  <Table.Th ta="right">Win %</Table.Th>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>
-                {rows.map((team) => (
-                  <Table.Tr key={team.team_id}>
-                    <Table.Td fw={700}>{team.rank}</Table.Td>
-                    <Table.Td>{team.team_name}</Table.Td>
-                    <Table.Td ta="right">{team.wins}</Table.Td>
-                    <Table.Td ta="right">{team.losses}</Table.Td>
-                    <Table.Td ta="right">{team.win_pct}</Table.Td>
-                  </Table.Tr>
-                ))}
-              </Table.Tbody>
-            </Table>
-          </ScrollArea>
+          <Grid gutter="xl" align="start">
+            <Grid.Col span={{ base: 12, xl: 6 }}>
+              <Stack gap="sm">
+                <Text fw={700}>Predicted standings</Text>
+                <PredictedStandingsTable rows={predictedRows} />
+              </Stack>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, xl: 6 }}>
+              <Stack gap="sm">
+                <Text fw={700}>Actual regular-season standings</Text>
+                <ActualStandingsTable rows={actualRows} />
+              </Stack>
+            </Grid.Col>
+          </Grid>
         )}
 
         <Text c="dimmed" fz="sm">
-          {seasonData?.methodology ||
-            "Simulation notes will appear here after the first run."}
+          {seasonResults?.methodology ||
+            "The model-vs-actual season comparison will appear here after the first load."}
         </Text>
       </Stack>
     </Paper>
