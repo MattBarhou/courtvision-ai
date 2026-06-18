@@ -4,6 +4,23 @@ CourtVision AI is a full-stack NBA analytics application that combines a product
 
 The goal of the project is to turn historical team performance data into a clean, interactive product that helps users explore both predictive basketball analytics and model accuracy. Rather than focusing only on model training, CourtVision AI is built as an end-to-end application with an API layer, reusable services, trained model artifacts, responsive UI, and live public-data integration for real-world comparison.
 
+## App Preview
+
+### Game Prediction
+Predict single-matchup winners with home/away win probabilities and confidence scores.
+
+![Game prediction screen](frontend/public/Screenshot%202026-06-17%20202024.png)
+
+### Season Simulation
+Compare projected regular-season standings against the actual 2025-26 finish.
+
+![Season simulation comparison](frontend/public/Screenshot%202026-06-17%20202109.png)
+
+### Title Odds & Playoffs
+Explore championship probabilities alongside the live playoff bracket.
+
+![Title odds and playoff bracket](frontend/public/Screenshot%202026-06-17%20202204.png)
+
 ## Core Features
 
 - Single-game winner prediction for NBA matchups
